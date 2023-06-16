@@ -1,86 +1,107 @@
-const authorModel = require('../models/authorModel.js')
-const blogModel = require('../models/blogModel.js')
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const userModel = require("../model/userModel");
+const bookModel = require("../model/bookModel");
 
-const {
-    JWT_SECRET
-} = process.env
+const JWT = require("jsonwebtoken");
+const {isValidObjectId} = require("mongoose");
+const {isValid} = require("../utils/validation")
 
 
 
-const isLoggedIn = async (req, res, next) => {
+// ======================================= AUTHENTICATION =============================================//
+
+
+
+const isAuthenticated = async function ( req , res , next ) {
     try {
-        const token = req.headers['X-Api-Key'] || req.headers['x-api-key']
+        let token = req.headers['x-api-key']; 
 
-        if (!token) return res.status(404).json({
-            Message: "Token Not Found"
-        })
+        if (!token) {
+            return res.status(400).send({ status: false, message: "Token must be Present." });
+        }
 
-        jwt.verify(token, JWT_SECRET, async(error, decoded) => {
-            if (error) {
-                return res.status(401).json({
-                    status: false,
-                    message: "Invalid Token Authentication failed"
-                });
+        JWT.verify( token, "encrypt", function ( err , decodedToken ) {
+            if (err) {
+
+                if (err.name === 'JsonWebTokenError') {
+                    return res.status(401).send({ status: false, message: "invalid token" });
+                }
+
+                if (err.name === 'TokenExpiredError') {
+                    return res.status(401).send({ status: false, message: "you are logged out, login again" });
+                } else {
+                    return res.send({ msg: err.message });
+                }
+            } else {
+                req.token = decodedToken
+                next()
             }
-
-            const author = await authorModel.findById(decoded.id);
-
-            if (!author) {
-                return res.status(401).json({
-                    message: 'Unauthorized access'
-                });
-            }
-
-            req.iD = author._id;
-            next();
         });
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            status: false,
-            message: "Internal Server Error",
-        })
+        res.status(500).send({ status: 'error', error: error.message })
     }
 }
 
 
-const authorization = async function (req, res, next) {
+
+// =========================================== AUTHORISATION ===========================================//
+
+
+
+const isAuthorized = async function ( req , res , next ) {
     try {
-        let token = req.headers["x-api-key"]
-        const decoded = jwt.verify(token, JWT_SECRET)
+        const loggedUserId = req.token.userId;
 
-        let decodedAuthor = decoded.id
-        let blogId = req.params.blogId
+        if (req.originalUrl === "/books") {
+            let userId = req.body.userId;
+            
+            if (!isValid(userId)) {
+                return res.status(400).send({ status: false, message: "userId must be in string." });
+            }
 
-        //get author Id by searching in database 
-        let getBlog = await blogModel.findById(blogId)
+            if (!isValidObjectId(userId)) {
+                return res.status(400).send({ status: false, message: "Invalid user id" });
+            }
 
-        if (getBlog == null) return res.status(404).send({
-            status: false,
-            message: "Blog not found"
-        });
+            const userData = await userModel.findById(userId);
 
-        let author = getBlog.authorId.toString()
-        if (decodedAuthor !== author) return res.status(400).send({
-            status: false,
-            message: "You are not authorised to perform this action"
-        })
+            if (!userData) {
+                return res.status(404).send({ status: false, message: "The user id does not exist" });
+            }
 
+            if (loggedUserId != userId) {
+                return res.status(403).send({ status: false, message: "Not authorized,please provide your own user id for book creation" });
+            }
+
+            req.body.userId = userId;
+        } else {
+            let bookId = req.params.bookId;
+
+            if (!bookId) {
+                return res.status(400).send({ status: false, message: "book id is mandatory" });
+            }
+
+            if (!isValidObjectId(bookId)) {
+                return res.status(400).send({ status: false, message: "Invalid Book ID" });
+            }
+
+            let checkBookId = await bookModel.findById(bookId);
+
+            if (!checkBookId) {
+                return res.status(404).send({ status: false, message: "Data Not found with this book id, Please enter a valid book id" });
+            }
+
+            let userId = checkBookId.userId;
+            
+            if (userId != loggedUserId) {
+                return res.status(403).send({ status: false, message: "Not authorized,please provide your own book id" });
+            }
+        }
         next();
-
-    } catch (error) {
-        res.status(500).send({
-            status: false,
-            error: error.message
-        })
+    } catch (err) {
+        return res.status(500).send({ status: false, message: err.message });
     }
 }
 
 
-
-
-module.exports.isLoggedIn = isLoggedIn
-module.exports.authorization = authorization;
+module.exports = { isAuthenticated, isAuthorized };

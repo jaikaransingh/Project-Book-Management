@@ -1,31 +1,46 @@
-const express = require('express')
-const router = express.Router()
-const { login,createAuthor,getAuthor } = require('../controllers/authorController.js')
-const { deleteBlogById,deleteByQuerying,createBlog,getBlog,getAllBlogs,updateBlog } = require('../controllers/blogController.js')
-const { isLoggedIn , authorization } = require('../middlewares/authMiddleware.js')
+const router = require("express").Router();
 
 
+const { createUser, loginUser } = require("../controller/userController");
+const { createBook, getBooks, getBookById, updateBooks, deleteBookById } = require("../controller/bookController");
+const { reviewBook, updateBookReview, deleteReviewById } = require("../controller/reviewController");
+const { isAuthenticated, isAuthorized } = require("../middleware/commonMIddleware");
 
 
-// author routes
-router.post("/authors", createAuthor)
-
-router.get("/authors", getAuthor)
-
-router.post('/login', login) // login author
+//======================================= Post APIs =============================================//
 
 
-//blog routes
-router.post('/blogs',isLoggedIn, createBlog)
-
-router.get('/blogs' ,isLoggedIn, getBlog);
-
-router.put('/blogs/:blogId',isLoggedIn,authorization, updateBlog);
-
-router.delete('/blogs/:blogId',isLoggedIn,authorization,deleteBlogById)
-
-router.delete('/blogs',isLoggedIn,deleteByQuerying)
+router.post("/register", createUser);
+router.post("/login", loginUser);
+router.post("/books", isAuthenticated, isAuthorized, createBook);
+router.post("/books/:bookId/review", reviewBook);
 
 
+//===================================== Get APIs ===============================================//
 
-module.exports = router
+
+router.get("/books", isAuthenticated, getBooks);
+router.get("/books/:bookId", isAuthenticated, getBookById);
+
+
+//===================================== Put APIs ==============================================//
+
+
+router.put("/books/:bookId", isAuthenticated, isAuthorized, updateBooks);
+router.put("/books/:bookId/review/:reviewId", updateBookReview);
+
+
+//===================================== Delete APIs ==========================================//
+router.delete("/books/:bookId", isAuthenticated, isAuthorized, deleteBookById);
+router.delete("/books/:bookId/review/:reviewId", deleteReviewById);
+
+
+//================================= Invalid Path API =========================================//
+
+
+router.all('/*', (req , res) => {
+    res.status(400).send({ status: false, message: " path invalid" });
+});
+
+
+module.exports = router;
