@@ -4,7 +4,7 @@ const router = require("express").Router();
 const { createUser, loginUser } = require("../controller/userController");
 const { createBook, getBooks, getBookById, updateBooks, deleteBookById } = require("../controller/bookController");
 const { reviewBook, updateBookReview, deleteReviewById } = require("../controller/reviewController");
-const { isAuthenticated, isAuthorized } = require("../middleware/commonMIddleware");
+const { isAuthenticated, isAuthorized } = require("../middleware/authMIddleware");
 
 
 //======================================= Post APIs =============================================//
