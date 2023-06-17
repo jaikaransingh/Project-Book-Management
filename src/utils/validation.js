@@ -24,19 +24,19 @@ const isValidMobile = function (input) {
 };
 
 
-const isValidPassword = (password) => {
+const isValidPassword = function (input) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$/;
-    return passwordRegex.test(password);
+    return passwordRegex.test(input);
 };
 
-const isValidPincode = (password) => {
+const isValidPincode = function (input) {
     const pincodeRegex = /^[1-9][0-9]{5}$/;
-    return pincodeRegex.test(password);
+    return pincodeRegex.test(input);
 };
 
-const isValidPlace = (password) => {
+const isValidPlace = function (input) {
     const placeRegex = /^[^\W\d_]+\.?(?:[-\s'’][^\W\d_]+\.?)*$/;
-    return placeRegex.test(password);
+    return placeRegex.test(input);
 };
 
 

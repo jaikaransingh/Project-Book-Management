@@ -58,13 +58,13 @@ const createUser = async function ( req , res ) {
 
             let { street, city, pincode } = address;
 
-            if (!isValid(street) || !isValid(city) || !isValid(pincode)) {
-                return res.status(400).send({ status: false, message: "Please Provide All valid street, city, pincode" });
-            }
+            // if (!isValid(street) || !isValid(city) || !isValid(pincode)) {
+            //     return res.status(400).send({ status: false, message: "Please Provide All valid street, city, pincode" });
+            // }
             
-            if (!isValidPlace(street) || !isValidPlace(city) || !isValidPincode(pincode)) {
-                return res.status(400).send({ status: false, message: "Please Provide All valid street, city, pincode" });
-            }
+            // if (!isValidPlace(street) || !isValidPlace(city) || !isValidPincode(pincode)) {
+            //     return res.status(400).send({ status: false, message: "Please Provide All valid street, city, pincode" });
+            // }
         }
 
         let userDetails = await userModel.create(data);
@@ -83,6 +83,8 @@ const loginUser = async function ( req , res ) {
         const data = req.body;
         let { email, password } = data;
         if (!isValidRequestBody(data)) {
+            return res.status(400).send({ status: false, message: "Body can not be empty" });
+        }
 
             if (!isValid(email) || !isValid(password)) {
                 return res.status(400).send({ status: false, message: "email must be valid" });
@@ -102,9 +104,6 @@ const loginUser = async function ( req , res ) {
 
             res.setHeader("x-api-key", token);
             res.status(200).send({ status: true, data: { "token": token} });
-        } else {
-            return res.status(400).send({ status: false, message: "Body can not be empty" });
-        }
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
     }
