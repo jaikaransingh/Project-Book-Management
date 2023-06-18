@@ -19,10 +19,8 @@ const isValidEmail = function (input) {
 };
 
 const isValidMobile = function (input) {
-    return /^[+]?[0-9]{1,3}?[-\s.]?[(]?\d{1,4}[)]?[-\s.]?\d{1,4}[-\s.]?\d{1,9}$/
-        .test(input);
+    return /^\d{10}$/.test(input);
 };
-
 
 const isValidPassword = function (input) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$/;
@@ -35,9 +33,10 @@ const isValidPincode = function (input) {
 };
 
 const isValidPlace = function (input) {
-    const placeRegex = /^[^\W\d_]+\.?(?:[-\s'’][^\W\d_]+\.?)*$/;
+    const placeRegex = /^[\w\s-]+$/;
     return placeRegex.test(input);
 };
+
 const isValidISBN = (ISBN) => {
     const isbnValid= (/^(?=(?:\D*\d){13}(?:(?:\D*\d){3})?$)[\d-]+$/g)
     return isbnValid.test(ISBN);

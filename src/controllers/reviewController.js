@@ -79,6 +79,10 @@ const updateBookReview = async function ( req , res ) {
         let body = req.body;
         let { reviewedBy, review, rating } = body;
 
+        if(!isValidRequestBody(data)){
+            return res.status(400).send({ status: false, message: "Please give Field for Update" });
+        }
+
         if (!ObjectId.isValid(bookId) || !ObjectId.isValid(reviewId)) {
             return res.status(400).send({ status: false, message: "Invalid Book ID OR Invalid Review ID" });
         }
@@ -106,17 +110,21 @@ const updateBookReview = async function ( req , res ) {
         }
 
         let updateData = {};
-
+        
+        if(reviewedBy){
         if (!isValid(reviewedBy)) {
                 return res.status(400).send({ status: false, message: "reviewedBy is not valid." });
         }
 
         updateData.reviewedBy = reviewedBy;
+        }
 
+        if(review){
         if (!isValid(review)) {
                 return res.status(400).send({ status: false, message: "review is not valid" });
             }
             updateData.review = review;
+        }
 
         if (rating) {
 

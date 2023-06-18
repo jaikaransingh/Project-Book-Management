@@ -61,13 +61,13 @@ const createUser = async function ( req , res ) {
 
             let { street, city, pincode } = address;
 
-            // if (!isValid(street) || !isValid(city) || !isValid(pincode)) {
-            //     return res.status(400).send({ status: false, message: "Please Provide All valid street, city, pincode" });
-            // }
+            if (!isValid(street) || !isValid(city) || !isValid(pincode)) {
+                return res.status(400).send({ status: false, message: "Please Provide All valid street, city, pincode" });
+            }
             
-            // if (!isValidPlace(street) || !isValidPlace(city) || !isValidPincode(pincode)) {
-            //     return res.status(400).send({ status: false, message: "Please Provide All valid street, city, pincode" });
-            // }
+            if (!isValidPlace(street) || !isValidPlace(city) || !isValidPincode(pincode)) {
+                return res.status(400).send({ status: false, message: "Please Provide All valid street, city, pincode" });
+            }
         }
 
         let userDetails = await userModel.create(data);
