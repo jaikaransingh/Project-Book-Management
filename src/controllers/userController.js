@@ -1,6 +1,9 @@
 const userModel = require("../models/userModel")
 const jwt = require("jsonwebtoken");
 
+require('dotenv').config();
+const { JWT_SECRET, JWT_EXPIRY } = process.env
+
 const {isValid,isValidString,isValidRequestBody,isValidEmail,isValidPassword,isValidMobile,isValidPincode,isValidPlace }=require("../utils/validation")
 
 
@@ -89,18 +92,15 @@ const loginUser = async function ( req , res ) {
             if (!isValid(email) || !isValid(password)) {
                 return res.status(400).send({ status: false, message: "email must be valid" });
             }
-            email = email.toLowerCase();
 
             const userData = await userModel.findOne({ email: email, password: password });
             if (!userData) {
                 return res.status(404).send({ status: false, message: "No such user exist. Please Enter a valid Email and Password." });
             }
 
-            let token = jwt.sign({
-                userId: userData._id.toString(),
-                exp: Math.floor(Date.now() / 1000) + (120 * 60),
-                iat: Math.floor(Date.now())
-            }, 'Encrypt');
+            const token = jwt.sign({userId: userData._id.toString()}, JWT_SECRET,{
+                expiresIn : JWT_EXPIRY
+            })
 
             res.setHeader("x-api-key", token);
             res.status(200).send({ status: true, data: { "token": token} });

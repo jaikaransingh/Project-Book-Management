@@ -1,9 +1,12 @@
-const userModel = require("../model/userModel");
-const bookModel = require("../model/bookModel");
+const userModel = require("../models/userModel");
+const bookModel = require("../models/bookModel");
 
 const JWT = require("jsonwebtoken");
 const {isValidObjectId} = require("mongoose");
 const {isValid} = require("../utils/validation")
+
+require('dotenv').config();
+const { JWT_SECRET } = process.env
 
 
 
@@ -19,7 +22,7 @@ const isAuthenticated = async function ( req , res , next ) {
             return res.status(400).send({ status: false, message: "Token must be Present." });
         }
 
-        JWT.verify( token, "encrypt", function ( err , decodedToken ) {
+        JWT.verify( token,JWT_SECRET, function ( err , decodedToken ) {
             if (err) {
 
                 if (err.name === 'JsonWebTokenError') {

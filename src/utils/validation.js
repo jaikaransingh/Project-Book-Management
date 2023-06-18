@@ -38,7 +38,10 @@ const isValidPlace = function (input) {
     const placeRegex = /^[^\W\d_]+\.?(?:[-\s'’][^\W\d_]+\.?)*$/;
     return placeRegex.test(input);
 };
-
+const isValidISBN = (ISBN) => {
+    const isbnValid= (/^(?=(?:\D*\d){13}(?:(?:\D*\d){3})?$)[\d-]+$/g)
+    return isbnValid.test(ISBN);
+}
 
 module.exports.isValid = isValid
 module.exports.isValidString = isValidString
@@ -48,4 +51,5 @@ module.exports.isValidPassword = isValidPassword
 module.exports.isValidMobile = isValidMobile
 module.exports.isValidPincode = isValidPincode
 module.exports.isValidPlace = isValidPlace
+module.exports.isValidISBN = isValidISBN
 
