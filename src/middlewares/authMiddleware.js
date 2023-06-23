@@ -26,11 +26,11 @@ const isAuthenticated = async function ( req , res , next ) {
             if (err) {
 
                 if (err.name === 'JsonWebTokenError') {
-                    return res.status(401).send({ status: false, message: "invalid token" });
+                    return res.status(404).send({ status: false, message: "invalid token" });
                 }
 
                 if (err.name === 'TokenExpiredError') {
-                    return res.status(401).send({ status: false, message: "you are logged out, login again" });
+                    return res.status(404).send({ status: false, message: "you are logged out, login again" });
                 } else {
                     return res.send({ msg: err.message });
                 }
