@@ -63,13 +63,13 @@ const createBook = async function (req, res) {
 
         let trimReleasedAt = releasedAt.trim()
 
-        // if (moment(trimReleasedAt, "YYYY-MM-DD").format("YYYY-MM-DD") !== trimReleasedAt) {
-        //     return res.status(400).send({
-        //         status: false,
-        //         message: "Please enter the Date in the format of 'YYYY-MM-DD'."
-        //     });
+        if (moment(trimReleasedAt, "YYYY-MM-DD").format("YYYY-MM-DD") !== trimReleasedAt) {
+            return res.status(400).send({
+                status: false,
+                message: "Please enter the Date in the format of 'YYYY-MM-DD'."
+            });
 
-        // }
+        }
 
         const bookList = await bookModel.create(body);
 
