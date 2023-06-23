@@ -106,7 +106,7 @@ const loginUser = async function ( req , res ) {
 
             const userData = await userModel.findOne({ email: email, password: password });
             if (!userData) {
-                return res.status(404).send({ status: false, message: "No such user exist. Please Enter a valid Email and Password." });
+                return res.status(401).send({ status: false, message: "No such user exist. Please Enter a valid Email and Password." });
             }
 
             const token = jwt.sign({userId: userData._id.toString()}, JWT_SECRET,{

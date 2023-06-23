@@ -19,7 +19,7 @@ const isAuthenticated = async function ( req , res , next ) {
         let token = req.headers['x-api-key']; 
 
         if (!token) {
-            return res.status(400).send({ status: false, message: "Token must be Present." });
+            return res.status(401).send({ status: false, message: "Token must be Present." });
         }
 
         JWT.verify( token,JWT_SECRET, function ( err , decodedToken ) {
