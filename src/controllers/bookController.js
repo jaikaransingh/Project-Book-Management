@@ -30,19 +30,19 @@ const createBook = async function (req, res) {
             });
         }
 
-        if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
-            return res.status(400).send({
-                status: false,
-                message: "Please Provide All valid Field"
-            });
-        }
+        // if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
+        //     return res.status(400).send({
+        //         status: false,
+        //         message: "Please Provide All valid Field"
+        //     });
+        // }
 
-        if (!isValidISBN(ISBN)) {
-            return res.status(400).send({
-                status: false,
-                message: " Invalid ISBN number it should contain only 13 digits"
-            });
-        }
+        // if (!isValidISBN(ISBN)) {
+        //     return res.status(400).send({
+        //         status: false,
+        //         message: " Invalid ISBN number it should contain only 13 digits"
+        //     });
+        // }
 
         const unique = await bookModel.findOne({
             $or: [{
@@ -53,7 +53,6 @@ const createBook = async function (req, res) {
                 title: title
             }]
         })
-
 
         if (unique) {
             return res.status(400).send({
@@ -90,7 +89,6 @@ const createBook = async function (req, res) {
 // ====================================== Get All Books List ==================================================//
 
 
-
 const getBooks = async function (req, res) {
     try {
         let data = req.query;
@@ -99,7 +97,7 @@ const getBooks = async function (req, res) {
         if (userId) {
 
             if (!isValidObjectId(userId)) {
-                return res.status(404).send({ status: false, message: "Invalid User ID." });
+                return res.status(400).send({ status: false, message: "Invalid User ID." });
             }
 
             const checkUserId = await userModel.findById(userId);
