@@ -30,12 +30,12 @@ const createBook = async function (req, res) {
             });
         }
 
-        if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
-            return res.status(400).send({
-                status: false,
-                message: "Please Provide All valid Field"
-            });
-        }
+        // if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
+        //     return res.status(400).send({
+        //         status: false,
+        //         message: "Please Provide All valid Field"
+        //     });
+        // }
 
         if (!isValidISBN(ISBN)) {
             return res.status(400).send({
@@ -64,13 +64,13 @@ const createBook = async function (req, res) {
 
         let trimReleasedAt = releasedAt.trim()
 
-        if (moment(trimReleasedAt, "YYYY-MM-DD").format("YYYY-MM-DD") !== trimReleasedAt) {
-            return res.status(400).send({
-                status: false,
-                message: "Please enter the Date in the format of 'YYYY-MM-DD'."
-            });
+        // if (moment(trimReleasedAt, "YYYY-MM-DD").format("YYYY-MM-DD") !== trimReleasedAt) {
+        //     return res.status(400).send({
+        //         status: false,
+        //         message: "Please enter the Date in the format of 'YYYY-MM-DD'."
+        //     });
 
-        }
+        // }
 
         const bookList = await bookModel.create(body);
 
@@ -98,9 +98,9 @@ const getBooks = async function (req, res) {
 
         if (userId) {
 
-            if (!isValidObjectId(userId)) {
-                return res.status(404).send({ status: false, message: "Invalid User ID." });
-            }
+            // if (!isValidObjectId(userId)) {
+            //     return res.status(404).send({ status: false, message: "Invalid User ID." });
+            // }
 
             const checkUserId = await userModel.findById(userId);
 
