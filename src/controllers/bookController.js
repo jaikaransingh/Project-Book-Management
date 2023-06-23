@@ -14,46 +14,78 @@ const { isAuthenticated, isAuthorized } = require("../middlewares/authMiddleware
 const createBook = async function (req, res) {
     try {
         let body = req.body;
-        let { title, excerpt,ISBN, category, subcategory, releasedAt } = body;
+        let {
+            title,
+            excerpt,
+            ISBN,
+            category,
+            subcategory,
+            releasedAt
+        } = body;
 
-        if (!isValid(title)|| !isValid(excerpt) || !isValid(ISBN) || !isValid(subcategory) || !isValid(category) || !isValid(releasedAt)) {
-            return res.status(400).send({ status: false, message: "Please Provide All valid Field" });
+        if (!isValid(title) || !isValid(excerpt) || !isValid(ISBN) || !isValid(subcategory) || !isValid(category) || !isValid(releasedAt)) {
+            return res.status(400).send({
+                status: false,
+                message: "Please Provide All valid Field"
+            });
         }
 
-        if (!isValidString(title) || !isValidString(ISBN) || !isValidString(category) || !isValidString(subcategory) || !isValidString(excerpt) ) {
-            return res.status(400).send({ status: false, message: "Please Provide All valid Information" });
-        }
         if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
-            return res.status(400).send({ status: false, message: "Please Provide All valid Field" });
+            return res.status(400).send({
+                status: false,
+                message: "Please Provide All valid Field"
+            });
         }
 
         if (!isValidISBN(ISBN)) {
-            return res.status(400).send({ status: false, message: " Invalid ISBN number it should contain only 13 digits" });
+            return res.status(400).send({
+                status: false,
+                message: " Invalid ISBN number it should contain only 13 digits"
+            });
         }
 
         const unique = await bookModel.findOne({
-            $or: [{ title: title }, { ISBN: ISBN },{ title: title }]
-          });
+            $or: [{
+                title: title
+            }, {
+                ISBN: ISBN
+            }, {
+                title: title
+            }]
+        })
+
 
         if (unique) {
-            return res.status(400).send({ status: false, message: "Book already exits" });
+            return res.status(400).send({
+                status: false,
+                message: "Book already exits"
+            });
         }
-        
-        let trimReleasedAt = releasedAt.trim();
+
+        let trimReleasedAt = releasedAt.trim()
 
         if (moment(trimReleasedAt, "YYYY-MM-DD").format("YYYY-MM-DD") !== trimReleasedAt) {
-            return res.status(400).send({ status: false, message: "Please enter the Date in the format of 'YYYY-MM-DD'." });
+            return res.status(400).send({
+                status: false,
+                message: "Please enter the Date in the format of 'YYYY-MM-DD'."
+            });
 
         }
 
         const bookList = await bookModel.create(body);
 
-        res.status(201).send({ status: true, message: "Success", data: bookList });
+        res.status(201).send({
+            status: true,
+            message: "Success",
+            data: bookList
+        });
     } catch (error) {
-        return res.status(500).send({ status: false, message: error.message })
+        res.status(500).json({
+            status: false,
+            message: error.message
+        })
     }
 }
-
 
 // ====================================== Get All Books List ==================================================//
 
@@ -67,7 +99,7 @@ const getBooks = async function (req, res) {
         if (userId) {
 
             if (!isValidObjectId(userId)) {
-                return res.status(400).send({ status: false, message: "Invalid User ID." });
+                return res.status(404).send({ status: false, message: "Invalid User ID." });
             }
 
             const checkUserId = await userModel.findById(userId);

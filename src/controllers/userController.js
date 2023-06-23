@@ -71,8 +71,19 @@ const createUser = async function ( req , res ) {
         }
 
         let userDetails = await userModel.create(data);
+        let response = {
+            _id:userDetails._id,
+            title:userDetails.title,
+            name:userDetails.name,
+            phone:userDetails.phone,
+            email:userDetails.email,
+            password:userDetails.password,
+            address: userDetails.address, 
+            createdAt:userDetails.createdAt,
+            updatedAt:userDetails.updatedAt 
+        }
 
-        res.status(201).send({ status: true, data: userDetails });
+        res.status(201).send({ status: true, message :"Successfull Created User", data: response });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
@@ -103,7 +114,7 @@ const loginUser = async function ( req , res ) {
             })
 
             res.setHeader("x-api-key", token);
-            res.status(200).send({ status: true, data: { "token": token} });
+            res.status(200).send({ status: true,message :"User LoggedIn", data: { "token": token} });
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
     }

@@ -23,7 +23,7 @@ const isValidMobile = function (input) {
 };
 
 const isValidPassword = function (input) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$/;
+    const passwordRegex = /^[a-zA-Z0-9]{6,15}$/;
     return passwordRegex.test(input);
 };
 
@@ -38,9 +38,9 @@ const isValidPlace = function (input) {
 };
 
 const isValidISBN = (ISBN) => {
-    const isbnValid= (/^(?=(?:\D*\d){13}(?:(?:\D*\d){3})?$)[\d-]+$/g)
+    const isbnValid = /^(?=(?:\D*\d){5}$)\d+$/g;
     return isbnValid.test(ISBN);
-}
+  };
 
 module.exports.isValid = isValid
 module.exports.isValidString = isValidString

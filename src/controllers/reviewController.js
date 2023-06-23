@@ -40,10 +40,6 @@ const reviewBook = async function ( req , res ) {
             return res.status(400).send({ status: false, message: "review can't be empty." });
         }
 
-        if (!isValid(reviewedBy)) {
-            return res.status(400).send({ status: false, message: "reviewer name is invalid." });
-        }
-
         const reviewData = await reviewModel.create(data);
 
         let result = {
@@ -59,7 +55,7 @@ const reviewBook = async function ( req , res ) {
             { _id: bookId },
             { $inc: { reviews: 1 } }
         );
-        return res.status(201).send({ status: true, message: "Success", data: result });
+        return res.status(201).send({ status: true, message: "Success", data: { reviewsData: result } });
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
     }
