@@ -59,11 +59,11 @@ const isAuthorized = async function ( req , res , next ) {
             let userId = req.body.userId;
             
             if (!isValid(userId)) {
-                return res.status(400).send({ status: false, message: "userId must be in string." });
+                return res.status(403).send({ status: false, message: "userId must be in string." });
             }
 
             if (!isValidObjectId(userId)) {
-                return res.status(400).send({ status: false, message: "Invalid user id" });
+                return res.status(403).send({ status: false, message: "Invalid user id" });
             }
 
             const userData = await userModel.findById(userId);
