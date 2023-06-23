@@ -30,19 +30,19 @@ const createBook = async function (req, res) {
             });
         }
 
-        if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
-            return res.status(400).send({
-                status: false,
-                message: "Please Provide All valid Field"
-            });
-        }
+        // if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
+        //     return res.status(400).send({
+        //         status: false,
+        //         message: "Please Provide All valid Field"
+        //     });
+        // }
 
-        if (!isValidISBN(ISBN)) {
-            return res.status(400).send({
-                status: false,
-                message: " Invalid ISBN number it should contain only 13 digits"
-            });
-        }
+        // if (!isValidISBN(ISBN)) {
+        //     return res.status(400).send({
+        //         status: false,
+        //         message: " Invalid ISBN number it should contain only 13 digits"
+        //     });
+        // }
 
         const unique = await bookModel.findOne({
             $or: [{
@@ -175,7 +175,7 @@ const updateBooks = async function (req, res) {
 
         if (Object.keys(data).length != 0) {
 
-            if (!title && !excerpt && !ISBN && !releasedAt) {
+            if (!title || !excerpt || !ISBN || !releasedAt) {
                 return res.status(400).send({ status: false, message: "At least one field is required." });
             }
 
