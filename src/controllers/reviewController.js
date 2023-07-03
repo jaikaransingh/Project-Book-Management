@@ -101,7 +101,7 @@ const updateBookReview = async function ( req , res ) {
             return res.status(400).send({ status: false, message: "Book ID not relevant to Review Id." });
         }
 
-        if (!reviewedBy && !review && !rating) {
+        if (!reviewedBy || !review || !rating) {
             return res.status(400).send({ status: false, message: "At least one field is required." });
         }
 

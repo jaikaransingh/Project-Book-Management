@@ -57,7 +57,6 @@ const isAuthorized = async function ( req , res , next ) {
 
         if (req.originalUrl === "/books") {
             let userId = req.body.userId;
-            
             if (!isValid(userId)) {
                 return res.status(400).send({ status: false, message: "userId must be in string." });
             }

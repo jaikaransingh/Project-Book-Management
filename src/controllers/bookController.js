@@ -1,11 +1,12 @@
 const bookModel = require("../models/bookModel");
 const userModel = require("../models/userModel");
 const reviewModel = require("../models/reviewModel");
+const aws = require("../aws/aws")
 const moment = require("moment");
 const { isValidObjectId } = require("mongoose");
 const {isValid,isValidString,isValidRequestBody,isValidISBN }=require("../utils/validation")
 const { isAuthenticated, isAuthorized } = require("../middlewares/authMiddleware");
-
+const {uploadFile} = require('../aws/aws')
 
 // ===================================== Create Books =====================================================//
 
@@ -30,19 +31,19 @@ const createBook = async function (req, res) {
             });
         }
 
-        // if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
-        //     return res.status(400).send({
-        //         status: false,
-        //         message: "Please Provide All valid Field"
-        //     });
-        // }
+        if (!isValidRequestBody(title) || !isValidRequestBody(excerpt) || !isValidRequestBody(ISBN) || !isValidRequestBody(subcategory) || !isValidRequestBody(category) || !isValidRequestBody(releasedAt)) {
+            return res.status(400).send({
+                status: false,
+                message: "Please Provide All valid Field"
+            });
+        }
 
-        // if (!isValidISBN(ISBN)) {
-        //     return res.status(400).send({
-        //         status: false,
-        //         message: " Invalid ISBN number it should contain only 13 digits"
-        //     });
-        // }
+        if (!isValidISBN(ISBN)) {
+            return res.status(400).send({
+                status: false,
+                message: " Invalid ISBN number it should contain only 13 digits"
+            });
+        }
 
         const unique = await bookModel.findOne({
             $or: [{
@@ -69,6 +70,19 @@ const createBook = async function (req, res) {
                 message: "Please enter the Date in the format of 'YYYY-MM-DD'."
             });
 
+        }
+        let files = req.files
+        if (files && files.length > 0) {
+            let uploadFileURL = await uploadFile(files[0])
+            body.bookCover = uploadFileURL
+            
+            const uniqueCover = await bookModel.findOne({ bookCover: uploadFileURL })
+            if (uniqueCover) {
+                return res.status(400).send({ status: false, message: "Book cover is already exist." })
+            }
+            
+        } else {
+            return res.status(400).send({ status: false, message: "No file found" })
         }
 
         const bookList = await bookModel.create(body);
@@ -284,4 +298,4 @@ const deleteBookById = async function (req, res) {
 
 
 
-module.exports = { createBook, getBooks, getBookById, updateBooks, deleteBookById };
+module.exports = { createBook,getBooks, getBookById, updateBooks, deleteBookById };

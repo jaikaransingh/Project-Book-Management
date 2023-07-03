@@ -7,7 +7,6 @@ const { JWT_SECRET, JWT_EXPIRY } = process.env
 const {isValid,isValidString,isValidRequestBody,isValidEmail,isValidPassword,isValidMobile,isValidPincode,isValidPlace }=require("../utils/validation")
 
 
-
 const createUser = async function ( req , res ) {
     try {
         let data = req.body;
